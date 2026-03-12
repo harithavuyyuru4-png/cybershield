@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>CyberShield</title>
+</head>
+
+<body>
+
+<h1>CyberShield Cyberbullying Detector</h1>
+
+<input type="text" id="message" placeholder="Enter message">
+
+<button onclick="checkMessage()">Check</button>
+
+<p id="result"></p>
+
+<script>
+
+function checkMessage(){
+
+let text = document.getElementById("message").value;
+
+fetch("http://127.0.0.1:5000/predict",{
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+body: JSON.stringify({text:text})
+})
+.then(response => response.json())
+.then(data=>{
+document.getElementById("result").innerText = data.prediction;
+});
+
+}
+
+</script>
+
+</body>
+</html>
