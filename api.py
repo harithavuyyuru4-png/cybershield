@@ -4,35 +4,29 @@ from flask_cors import CORS
 app = Flask(__name__)
 CORS(app)
 
-@app.route('/predict', methods=['POST'])
+# Simple cyberbullying words list
+bad_words = ["kill", "fuck", "stupid", "idiot", "hate", "die"]
+
+@app.route("/")
+def home():
+    return """
+    <h2>CyberShield - Cyberbullying Detection</h2>
+    <form action="/predict" method="post">
+        <input type="text" name="message" placeholder="Enter message here">
+        <button type="submit">Check</button>
+    </form>
+    """
+
+@app.route("/predict", methods=["POST"])
 def predict():
+    message = request.form.get("message")
 
-    data = request.get_json()
-    text = data['text'].lower()
+    if any(word in message.lower() for word in bad_words):
+        result = "Cyberbullying Detected"
+    else:
+        result = "Not Cyberbullying"
 
-    abusive_words = [
-        "stupid",
-        "idiot",
-        "ugly",
-        "hate",
-        "fool",
-        "fuck",
-        "kill",
-        "bastard",
-        "moron",
-        "dumb",
-        "loser",
-        "shut up"
-    ]
-
-    result = "Not Cyberbullying"
-
-    for word in abusive_words:
-        if word in text:
-            result = "Cyberbullying"
-            break
-
-    return jsonify({"prediction": result})
+    return f"<h3>Result: {result}</h3><br><a href='/'>Go Back</a>"
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000)
+    app.run()
